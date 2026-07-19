@@ -9,6 +9,18 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 ENDPOINTS=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"]
+# OSM maps future stations early. Keep the public picker on operational MRT only.
+# Review this set when LTA opens a new line or infill station.
+NON_OPERATIONAL={
+  "Aviation Park","Bahar Junction","Bedok South","Bukit Batok West","Bukit Brown",
+  "Choa Chu Kang West","Corporation","Defu","Elias","Enterprise","Founders' Memorial",
+  "Gek Poh","Hong Kah","Jurong Hill","Jurong Pier","Jurong Town Hall","Jurong West",
+  "Loyang","Maju","Marina South","Mount Pleasant","Nanyang Crescent","Nanyang Gateway",
+  "Pandan Reservoir","Pasir Ris East","Peng Kang Hill","Serangoon North","Sungei Bedok",
+  "Tampines North","Tavistock","Tawas","Teck Ghee","Tengah","Tengah Park",
+  "Tengah Plantation","Toh Guan","Tukang","Turf City","West Coast","Xilin"
+}
+NOT_MRT={"Riviera","Samudera","VivoCity","Woodlands Train Checkpoint"}
 def fetch(q,endpoints):
   payload=urlencode({"data":q}).encode(); last=None
   for attempt in range(3):
@@ -25,14 +37,15 @@ def dist(a,b):
   return round(12742000*math.asin(math.sqrt(h)))
 def eid(prefix,e):return f"{prefix}-{e['type']}-{e['id']}"
 def main():
-  p=argparse.ArgumentParser();p.add_argument("--radius",type=int,default=1000);p.add_argument("--output",type=Path,default=Path("public/data/restaurants.json"));p.add_argument("--endpoint",action="append");p.add_argument("--min-restaurants",type=int,default=1);a=p.parse_args(); endpoints=a.endpoint or ENDPOINTS
+  p=argparse.ArgumentParser();p.add_argument("--radius",type=int,default=1000);p.add_argument("--output",type=Path,default=Path("public/data/restaurants.json"));p.add_argument("--endpoint",action="append");p.add_argument("--min-restaurants",type=int,default=0);a=p.parse_args(); endpoints=a.endpoint or ENDPOINTS
   sq='''[out:json][timeout:120];area["ISO3166-1"="SG"][admin_level=2]->.sg;(nwr(area.sg)["railway"="station"]["station"="subway"];nwr(area.sg)["public_transport"="station"]["train"="yes"];);out center tags;'''
   rq='''[out:json][timeout:180];area["ISO3166-1"="SG"][admin_level=2]->.sg;nwr(area.sg)["amenity"="restaurant"]["name"];out center tags;'''
   print("Fetching MRT stations and restaurants…",file=sys.stderr); raw_s=fetch(sq,endpoints)["elements"]; raw_r=fetch(rq,endpoints)["elements"]
   station_map={}
   for e in raw_s:
     t=e.get("tags",{}); n=t.get("name:en") or t.get("name")
-    if n and "depot" not in n.lower():station_map.setdefault(n.lower().replace(" mrt station","").strip(),e)
+    clean=(n or "").replace(" MRT Station","")
+    if n and "depot" not in n.lower() and clean not in NON_OPERATIONAL|NOT_MRT:station_map.setdefault(clean.lower().strip(),e)
   restaurants=[]
   for e in raw_r:
     t=e.get("tags",{});n=t.get("name:en") or t.get("name"); kind=" ".join((t.get("cuisine",""),n or "")).lower()
@@ -44,9 +57,13 @@ def main():
   stations=[]
   for e in station_map.values():
     t=e.get("tags",{});lat,lon=pos(e);n=(t.get("name:en") or t.get("name")).replace(" MRT Station","");near=[]
+    all_dist=[]
     for rp,r in restaurants:
       m=dist((lat,lon),rp)
+      all_dist.append((m,r))
       if m<=a.radius:near.append({**r,"distanceM":m})
+    if not near:
+      near=[{**r,"distanceM":m} for m,r in sorted(all_dist,key=lambda x:x[0])[:10]]
     near.sort(key=lambda x:(x["distanceM"],x["name"]))
     if len(near)>=a.min_restaurants:stations.append({"id":eid("station",e),"name":n,"nameZh":t.get("name:zh"),"lines":[],"lat":lat,"lon":lon,"restaurants":near})
   stations.sort(key=lambda x:x["name"]); result={"updatedAt":datetime.now(timezone.utc).isoformat(),"source":"© OpenStreetMap contributors / Overpass API","radiusM":a.radius,"stations":stations}
