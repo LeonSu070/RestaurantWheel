@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
-type Restaurant = { id:string; name:string; nameZh?:string; address:string; cuisine:string; openingHours:string; lat:number; lon:number; distanceM:number };
-type Station = { id:string; name:string; nameZh?:string; lines:string[]; lat:number; lon:number; restaurants:Restaurant[] };
+type Restaurant = { id:string; name:string; nameZh?:string|null; address:string; cuisine:string; openingHours:string; lat:number; lon:number; distanceM:number };
+type Station = { id:string; name:string; nameZh?:string|null; lines:string[]; lat:number; lon:number; restaurants:Restaurant[] };
 type Dataset = { updatedAt:string; source:string; radiusM:number; stations:Station[] };
 type Phase = "station-ready" | "station-spin" | "restaurant-ready" | "restaurant-spin" | "done";
 
@@ -24,7 +24,7 @@ export default function Picker({ data }:{ data:Dataset }) {
   const t = copy[lang];
 
   useEffect(() => () => { if (timer.current) clearInterval(timer.current); }, []);
-  const name = (x:{name:string;nameZh?:string}) => lang === "zh" && x.nameZh ? x.nameZh : x.name;
+  const name = (x:{name:string;nameZh?:string|null}) => lang === "zh" && x.nameZh ? x.nameZh : x.name;
 
   function shuffled<T>(items:T[]) {
     const result = [...items];

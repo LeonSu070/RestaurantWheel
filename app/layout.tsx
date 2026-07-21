@@ -16,8 +16,8 @@ export const metadata: Metadata = {
   title: "Makan Next Stop — Singapore Restaurant Picker",
   description: "Let Singapore's MRT choose where you eat next.",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: `${process.env.GITHUB_PAGES === "true" ? "/RestaurantWheel" : ""}/favicon.svg`,
+    shortcut: `${process.env.GITHUB_PAGES === "true" ? "/RestaurantWheel" : ""}/favicon.svg`,
   },
 };
 
