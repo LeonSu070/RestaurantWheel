@@ -21,7 +21,7 @@ h1 em { color:var(--red); font-style:normal; }
 .picker { background:var(--ink); color:white; border-radius:28px; padding:34px; min-height:330px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 18px 45px #17292322; }
 .step { display:flex; justify-content:space-between; align-items:center; color:#c9d7d1; font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
 .lines { display:flex; gap:5px; }.line { width:30px;height:5px;border-radius:5px;background:#51635c;}.line.on{background:var(--yellow)}
-.rolling { font-size:clamp(33px,5vw,64px); line-height:1.05; letter-spacing:-.05em; font-weight:900; margin:22px 0; min-height:1.1em; display:flex;align-items:center; }
+.rolling { font-size:clamp(33px,5vw,64px); line-height:1.05; letter-spacing:-.05em; font-weight:900; margin:22px 0; height:2.15em; min-height:2.15em; display:flex; align-items:center; overflow:hidden; overflow-wrap:anywhere; }
 .rolling.active { animation:flicker .12s infinite alternate; }
 @keyframes flicker { from{transform:translateY(-2px);filter:blur(.2px)}to{transform:translateY(2px)} }
 .station-label { display:block; color:#aebdb6; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin-bottom:7px; }
