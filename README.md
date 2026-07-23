@@ -8,7 +8,7 @@ The updater uses OpenStreetMap's Overpass API and Python 3 only. It fetches mapp
 
 ```bash
 python3 scripts/fetch_singapore_food.py
-python3 scripts/fetch_singapore_food.py --radius 800
+python3 scripts/fetch_singapore_food.py --radius 500
 ```
 
 Schedule the same command with cron or GitHub Actions for periodic updates. Cuisine and opening hours are included where OpenStreetMap contributors have supplied them.

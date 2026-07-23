@@ -22,6 +22,7 @@ export default function Picker({ data }:{ data:Dataset }) {
   const timer = useRef<ReturnType<typeof setInterval>|null>(null);
   const current = useRef<Station|Restaurant|null>(null);
   const t = copy[lang];
+  const eligibleStations = data.stations.filter(item => item.restaurants.length > 0);
 
   useEffect(() => () => { if (timer.current) clearInterval(timer.current); }, []);
   const name = (x:{name:string;nameZh?:string|null}) => lang === "zh" && x.nameZh ? x.nameZh : x.name;
@@ -63,7 +64,7 @@ export default function Picker({ data }:{ data:Dataset }) {
   function chooseStation(value:string) {
     setStationSearch(value);
     const normalized=value.trim().toLocaleLowerCase();
-    const picked=data.stations.find(item => item.name.toLocaleLowerCase()===normalized || item.nameZh?.toLocaleLowerCase()===normalized);
+    const picked=eligibleStations.find(item => item.name.toLocaleLowerCase()===normalized || item.nameZh?.toLocaleLowerCase()===normalized);
     if (!picked) return;
     if (timer.current) clearInterval(timer.current);
     timer.current=null; current.current=picked;
@@ -71,7 +72,7 @@ export default function Picker({ data }:{ data:Dataset }) {
   }
 
   function act() {
-    if (phase==="station-ready") { setRestaurant(null); setStation(null); setStationSearch(""); setPhase("station-spin"); spin(data.stations); }
+    if (phase==="station-ready") { setRestaurant(null); setStation(null); setStationSearch(""); setPhase("station-spin"); spin(eligibleStations); }
     else if (phase==="station-spin") stop("station");
     else if (phase==="restaurant-ready" && station) { setPhase("restaurant-spin"); spin(station.restaurants); }
     else if (phase==="restaurant-spin" && station) stop("restaurant");
@@ -100,7 +101,7 @@ export default function Picker({ data }:{ data:Dataset }) {
             <div className="station-select-wrap">
               <span aria-hidden="true">⌕</span>
               <input id="station-search" className="station-select" list="mrt-stations" value={stationSearch} onChange={event=>chooseStation(event.target.value)} placeholder={t.search} disabled={active}/>
-              <datalist id="mrt-stations">{data.stations.map(item=><option key={item.id} value={name(item)}>{item.name}</option>)}</datalist>
+              <datalist id="mrt-stations">{eligibleStations.map(item=><option key={item.id} value={name(item)}>{item.name}</option>)}</datalist>
             </div>
             <div className="lines" aria-hidden="true"><i className="line on"/><i className={`line ${station?"on":""}`}/><i className={`line ${restaurant?"on":""}`}/></div>
             <button className="action" onClick={act}>{active?"■ ":"● "}{label}</button>

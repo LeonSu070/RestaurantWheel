@@ -48,7 +48,7 @@ def is_food_court(tags,name):
   normalized=" ".join((name+" "+text).lower().replace("_"," ").replace("-"," ").split())
   return any(marker in normalized for marker in FOOD_COURT_MARKERS)
 def main():
-  p=argparse.ArgumentParser();p.add_argument("--radius",type=int,default=1000);p.add_argument("--output",type=Path,default=Path("public/data/restaurants.json"));p.add_argument("--endpoint",action="append");p.add_argument("--min-restaurants",type=int,default=0);a=p.parse_args(); endpoints=a.endpoint or ENDPOINTS
+  p=argparse.ArgumentParser();p.add_argument("--radius",type=int,default=500);p.add_argument("--output",type=Path,default=Path("public/data/restaurants.json"));p.add_argument("--endpoint",action="append");p.add_argument("--min-restaurants",type=int,default=0);a=p.parse_args(); endpoints=a.endpoint or ENDPOINTS
   sq='''[out:json][timeout:120];area["ISO3166-1"="SG"][admin_level=2]->.sg;(nwr(area.sg)["railway"="station"]["station"="subway"];nwr(area.sg)["public_transport"="station"]["train"="yes"];);out center tags;'''
   rq='''[out:json][timeout:180];area["ISO3166-1"="SG"][admin_level=2]->.sg;nwr(area.sg)["amenity"="restaurant"]["name"];out center tags;'''
   print("Fetching MRT stations and restaurants…",file=sys.stderr); raw_s=fetch(sq,endpoints)["elements"]; raw_r=fetch(rq,endpoints)["elements"]
@@ -69,13 +69,9 @@ def main():
   stations=[]
   for e in station_map.values():
     t=e.get("tags",{});lat,lon=pos(e);n=(t.get("name:en") or t.get("name")).replace(" MRT Station","");near=[]
-    all_dist=[]
     for rp,r in restaurants:
       m=dist((lat,lon),rp)
-      all_dist.append((m,r))
       if m<=a.radius:near.append({**r,"distanceM":m})
-    if not near:
-      near=[{**r,"distanceM":m} for m,r in sorted(all_dist,key=lambda x:x[0])[:10]]
     near.sort(key=lambda x:(x["distanceM"],x["name"]))
     if len(near)>=a.min_restaurants:stations.append({"id":eid("station",e),"name":n,"nameZh":t.get("name:zh"),"lines":[],"lat":lat,"lon":lon,"restaurants":near})
   stations.sort(key=lambda x:x["name"]); result={"updatedAt":datetime.now(timezone.utc).isoformat(),"source":"© OpenStreetMap contributors / Overpass API","radiusM":a.radius,"stations":stations}
