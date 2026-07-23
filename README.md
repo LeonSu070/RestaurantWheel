@@ -13,6 +13,8 @@ python3 scripts/fetch_singapore_food.py --radius 500
 
 Schedule the same command with cron or GitHub Actions for periodic updates. Cuisine and opening hours are included where OpenStreetMap contributors have supplied them.
 
+Permanently closed restaurants can be added to `data/closed-restaurants.json` by OSM ID or exact name. The updater removes these entries every time it regenerates the public JSON.
+
 ## Development
 
 A clean full-stack starter running on

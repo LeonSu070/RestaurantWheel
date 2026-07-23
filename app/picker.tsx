@@ -8,8 +8,8 @@ type Dataset = { updatedAt:string; source:string; radiusM:number; stations:Stati
 type Phase = "station-ready" | "station-spin" | "restaurant-ready" | "restaurant-spin" | "done";
 
 const copy = {
-  en: { eyebrow:"Singapore food roulette", title1:"Your next meal.", title2:"One stop away.", sub:"Leave lunch to the MRT. Pick a station, then let the neighbourhood choose your table.", step:"Current journey", startStation:"Roll a station", stopStation:"Stop at this station", startFood:"Roll a restaurant", stopFood:"That's the one", again:"Start a new journey", placeholder:"Ready when you are", empty:"Your restaurant details will appear here.", address:"Address", hours:"Opening hours", cuisine:"Cuisine", map:"Open in Google Maps", updated:"Data updated", near:"nearby restaurants", station:"station", restaurant:"restaurant", choose:"Or choose a station", search:"Search or select an MRT station" },
-  zh: { eyebrow:"新加坡美食轮盘", title1:"下一顿饭，", title2:"只差一站。", sub:"把午餐交给地铁。先抽一个地铁站，再让附近街区替你选餐厅。", step:"当前旅程", startStation:"抽一个地铁站", stopStation:"就选这个地铁站", startFood:"抽一家餐厅", stopFood:"就是这家", again:"重新开始", placeholder:"准备好就出发", empty:"选中餐厅后，详细信息会显示在这里。", address:"地址", hours:"营业时间", cuisine:"菜系", map:"在 Google 地图中打开", updated:"数据更新于", near:"家附近餐厅", station:"地铁站", restaurant:"餐厅", choose:"或手动选择地铁站", search:"搜索或选择地铁站" },
+  en: { eyebrow:"Singapore food roulette", title1:"Your next meal.", title2:"One stop away.", sub:"Leave lunch to the MRT. Pick a station, then let the neighbourhood choose your table.", step:"Current journey", startStation:"Roll a station", stopStation:"Stop at this station", startFood:"Roll a restaurant", stopFood:"That's the one", again:"Start a new journey", placeholder:"Ready when you are", empty:"Your restaurant details will appear here.", address:"Address", hours:"Opening hours", cuisine:"Cuisine", map:"Open in Google Maps", report:"Report permanently closed", updated:"Data updated", near:"nearby restaurants", station:"station", restaurant:"restaurant", choose:"Or choose a station", search:"Search or select an MRT station" },
+  zh: { eyebrow:"新加坡美食轮盘", title1:"下一顿饭，", title2:"只差一站。", sub:"把午餐交给地铁。先抽一个地铁站，再让附近街区替你选餐厅。", step:"当前旅程", startStation:"抽一个地铁站", stopStation:"就选这个地铁站", startFood:"抽一家餐厅", stopFood:"就是这家", again:"重新开始", placeholder:"准备好就出发", empty:"选中餐厅后，详细信息会显示在这里。", address:"地址", hours:"营业时间", cuisine:"菜系", map:"在 Google 地图中打开", report:"报告餐厅已永久关闭", updated:"数据更新于", near:"家附近餐厅", station:"地铁站", restaurant:"餐厅", choose:"或手动选择地铁站", search:"搜索或选择地铁站" },
 };
 
 export default function Picker({ data }:{ data:Dataset }) {
@@ -82,6 +82,7 @@ export default function Picker({ data }:{ data:Dataset }) {
   const label={ "station-ready":t.startStation, "station-spin":t.stopStation, "restaurant-ready":t.startFood, "restaurant-spin":t.stopFood, done:t.again }[phase];
   const active=phase.includes("spin");
   const shown=display || (station ? name(station) : t.placeholder);
+  const reportUrl=restaurant ? `https://github.com/LeonSu070/RestaurantWheel/issues/new?${new URLSearchParams({title:`Closed restaurant: ${restaurant.name}`,body:`Please verify and add this restaurant to data/closed-restaurants.json.\n\nRestaurant: ${restaurant.name}\nOSM ID: ${restaurant.id}\nMRT station: ${station?.name||""}\nAddress: ${restaurant.address}\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${restaurant.name}, ${restaurant.address}`)}`}).toString()}` : "";
 
   return <main className="shell">
     <header className="topbar">
@@ -113,6 +114,7 @@ export default function Picker({ data }:{ data:Dataset }) {
           <div className="info"><span>◷</span><div><b>{t.hours}</b>{restaurant.openingHours||"—"}</div></div>
           <div className="info"><span>♨</span><div><b>{t.cuisine}</b>{restaurant.cuisine||"—"}</div></div>
           <div className="info"><span>↗</span><div><a className="map" target="_blank" rel="noreferrer" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${restaurant.name}, ${restaurant.address}`)}`}>{t.map}</a></div></div>
+          <a className="report" target="_blank" rel="noreferrer" href={reportUrl}>{t.report}</a>
         </> : <div className="empty"><div className="empty-icon">⌖</div><b>{station?`${station.restaurants.length} ${t.near}`:t.placeholder}</b><p>{t.empty}</p></div>}</aside>
       </div>
       <footer className="foot"><span>{data.stations.length} MRT stops · {data.stations.reduce((n,s)=>n+s.restaurants.length,0)} restaurants</span><span>{t.updated} {new Date(data.updatedAt).toLocaleDateString(lang==="zh"?"zh-SG":"en-SG")}</span></footer>

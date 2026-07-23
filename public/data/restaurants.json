@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-23T01:51:15.794619+00:00",
+  "updatedAt": "2026-07-23T02:02:13.173732+00:00",
   "source": "© OpenStreetMap contributors / Overpass API",
   "radiusM": 500,
   "stations": [
@@ -22441,7 +22441,7 @@
     {
       "id": "station-way-298087552",
       "name": "Gardens by the Bay",
-      "nameZh": "濱海灣花園",
+      "nameZh": "滨海湾花园",
       "lines": [],
       "lat": 1.2792306,
       "lon": 103.8679453,
@@ -26864,7 +26864,7 @@
     {
       "id": "station-way-1008913156",
       "name": "Keppel",
-      "nameZh": "岌巴",
+      "nameZh": "吉宝",
       "lines": [],
       "lat": 1.2704618,
       "lon": 103.830708,
@@ -39696,7 +39696,7 @@
     {
       "id": "station-way-1008913158",
       "name": "Prince Edward Road",
-      "nameZh": "爱德华太子",
+      "nameZh": "爱德华太子路",
       "lines": [],
       "lat": 1.273286,
       "lon": 103.8470995,

@@ -36,6 +36,7 @@ h1 em { color:var(--red); font-style:normal; }
 .empty-icon { width:72px;height:72px;border:2px dashed #b6beb9;border-radius:50%;display:grid;place-items:center;font-size:28px;margin-bottom:16px; }
 .details h2 { font-size:29px; letter-spacing:-.04em; margin:8px 0 18px; }.tag{display:inline-flex;padding:6px 10px;background:#e4f0ea;color:var(--green);border-radius:99px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
 .info { border-top:1px solid #ddd7ca; padding:13px 0; display:grid;grid-template-columns:28px 1fr;gap:8px;font-size:14px;line-height:1.45; }.info b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#89928e;margin-bottom:3px}.map{color:var(--red);font-weight:800;text-decoration:none}.map:hover{text-decoration:underline}
+.report { display:inline-block; margin-top:10px; color:#7f8884; font-size:12px; text-decoration:underline; text-underline-offset:3px; }.report:hover{color:var(--red)}
 .foot { margin-top:28px; display:flex;justify-content:space-between;color:#78827d;font-size:11px;letter-spacing:.05em;text-transform:uppercase; }
 @media(max-width:760px){.shell{padding:22px 18px}.main{margin-top:6vh}.board{grid-template-columns:1fr}.picker{padding:25px;min-height:260px}.details{min-height:240px}h1{font-size:53px}.sub{font-size:15px}.foot{gap:14px;flex-direction:column}}
 @media(prefers-reduced-motion:reduce){.rolling.active{animation:none}}
